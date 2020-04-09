@@ -19,5 +19,8 @@
     "start-dev": " nodemon --config \"./nodemon.json\"/",
     "build-dev": "tsc --watch --preserveWatchOutput",
     "start": "concurrently \"yarn:build-dev\" \"yarn:start-dev\""
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
