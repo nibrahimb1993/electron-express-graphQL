@@ -1,11 +1,32 @@
-// index.ts
-import { app, BrowserWindow } from 'electron'
 import { Express } from 'express'
-import express = require('express')
+const { app, BrowserWindow } = require('electron')
+const express = require('express')
+const { ApolloServer, gql } = require('apollo-server-express')
 
 const expressApp: Express = express()
-export const expressServer = expressApp.listen(4100, () => {
-  console.log(`Server is listening on port ${4100}`)
+
+const typeDefs = gql`
+  type Query {
+    "A simple type for getting started!"
+    hello: String
+  }
+`
+
+const resolvers = {
+  Query: {
+    hello: () => 'world',
+  },
+}
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+})
+
+server.applyMiddleware({ app: expressApp, path: '/graphql' })
+
+const expressServer = expressApp.listen(4100, () => {
+  console.log(`🚀 Server ready at http://localhost:4100${server.graphqlPath}`)
 })
 declare var __dirname: string
 let win
