@@ -20,7 +20,7 @@ const db = new sql.Database(DBSOURCE, err => {
             )`,
       (err: any) => {
         if (err) {
-          console.log({ err })
+          // console.log({ err })
           // Table already created
         } else {
           // Table just created, creating some rows

@@ -1,34 +1,22 @@
 import { Express } from 'express'
 import db from './DB'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { HttpLink } from 'apollo-link-http'
 import 'cross-fetch/polyfill'
+import { generateElectronClient } from './GraphQL/client'
 
-const { ApolloClient } = require('apollo-client')
 const { app, BrowserWindow } = require('electron')
 const express = require('express')
 const { ApolloServer, gql } = require('apollo-server-express')
 
 const expressApp: Express = express()
-const cache = new InMemoryCache()
-const link = new HttpLink({
-  uri: 'http://localhost:4100/graphql',
-})
-const client = new ApolloClient({
-  cache: cache,
-  link: link,
-})
+
+const { client, disconnectSocket } = generateElectronClient()
 const typeDefs = gql`
   type Query {
     "A simple type for getting started!"
     hello: String
   }
 `
-const q = gql`
-  query test {
-    hello
-  }
-`
+
 const resolvers = {
   Query: {
     hello: () => 'world',
@@ -46,16 +34,6 @@ const expressServer = expressApp.listen(4100, () => {
 })
 expressApp.get('/', (_, res) => {
   const sql = 'select * from user'
-  client
-    .query({
-      query: q,
-    })
-    .then((response: any) => {
-      console.log(response)
-    })
-    .catch((error: any) => {
-      console.log({ error })
-    })
   db.all(sql, {}, (err, rows) => {
     console.log({ err, rows })
     if (err) {
@@ -84,3 +62,7 @@ let createWindow = () => {
 }
 
 app.on('ready', createWindow)
+
+app.removeListener('close', () => {
+  disconnectSocket()
+})
