@@ -12,7 +12,7 @@ const { ApolloServer, gql } = require('apollo-server-express')
 const expressApp: Express = express()
 const cache = new InMemoryCache()
 const link = new HttpLink({
-  uri: 'http://localhost:4100/',
+  uri: 'http://localhost:4100/graphql',
 })
 const client = new ApolloClient({
   cache: cache,
