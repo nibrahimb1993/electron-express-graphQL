@@ -58,11 +58,8 @@ let createWindow = () => {
   win.on('closed', () => {
     win = null
     expressServer.close()
+    disconnectSocket()
   })
 }
 
 app.on('ready', createWindow)
-
-app.removeListener('close', () => {
-  disconnectSocket()
-})
