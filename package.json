@@ -22,7 +22,7 @@
     "build-dev": "tsc --watch --preserveWatchOutput",
     "start": "concurrently \"yarn:build-dev\" \"yarn:start-dev\"",
     "postinstall": "electron-builder install-app-deps",
-    "build-electron": "build --dir ./dist"
+    "build": "electron-builder"
   },
   "dependencies": {
     "apollo-server-express": "^2.12.0",
