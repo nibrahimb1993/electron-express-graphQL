@@ -1,25 +1,39 @@
 import { Express } from 'express'
 import db from './DB'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { HttpLink } from 'apollo-link-http'
+import 'cross-fetch/polyfill'
 
+const { ApolloClient } = require('apollo-client')
 const { app, BrowserWindow } = require('electron')
 const express = require('express')
 const { ApolloServer, gql } = require('apollo-server-express')
 
 const expressApp: Express = express()
-
+const cache = new InMemoryCache()
+const link = new HttpLink({
+  uri: 'http://localhost:4100/',
+})
+const client = new ApolloClient({
+  cache: cache,
+  link: link,
+})
 const typeDefs = gql`
   type Query {
     "A simple type for getting started!"
     hello: String
   }
 `
-
+const q = gql`
+  query test {
+    hello
+  }
+`
 const resolvers = {
   Query: {
     hello: () => 'world',
   },
 }
-
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -32,7 +46,16 @@ const expressServer = expressApp.listen(4100, () => {
 })
 expressApp.get('/', (_, res) => {
   const sql = 'select * from user'
-
+  client
+    .query({
+      query: q,
+    })
+    .then((response: any) => {
+      console.log(response)
+    })
+    .catch((error: any) => {
+      console.log({ error })
+    })
   db.all(sql, {}, (err, rows) => {
     console.log({ err, rows })
     if (err) {
