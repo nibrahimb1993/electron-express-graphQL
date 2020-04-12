@@ -6,5 +6,5 @@
   "ignore": [
     "src/public"
   ],
-  "exec": "tsc src/index.ts && electron dist/."
+  "exec": "tsc -p tsconfig.json && electron dist/."
 }
