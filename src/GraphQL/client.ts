@@ -4,9 +4,19 @@ import { w3cwebsocket as WebSocket } from 'websocket'
 import { Socket } from 'phoenix'
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-const { gql } = require('apollo-server-express')
 import * as Fragments from './Fragments'
+
+import { get } from 'lodash'
+import {
+  storeTerminalParser,
+  StoreTerminalModel,
+} from '../DB/Models/StoreTerminal'
+import { businessParser, BusinessModel } from '../DB/Models/Business'
+
+const { gql } = require('apollo-server-express')
+
 const cache = new InMemoryCache()
+
 const snapshotQuery = gql`
   query snapshot {
     myTerminal {
@@ -124,10 +134,23 @@ export const generateElectronClient = () => {
       query: snapshotQuery,
     })
     .then(response => {
-      console.log({ response: JSON.stringify(response) })
+      console.log('snapshot response success')
+
+      const storeTerminals = storeTerminalParser(
+        get(response, 'data.myTerminal', {})
+      )
+      const business = businessParser(
+        get(response, 'data.myTerminal.snapshot.business', {})
+      )
+      console.log({ business })
+      BusinessModel.upsert({ ...business })
+      StoreTerminalModel.upsert({ ...storeTerminals })
+      console.log({ storeTerminals })
     })
     .catch(error => {
+      console.log('something went wrong')
       console.log({ error })
     })
+
   return { client, disconnectSocket: () => socket.disconnect(), socket }
 }
