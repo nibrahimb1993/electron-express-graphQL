@@ -29,11 +29,13 @@
     "build-dev": "tsc --watch --preserveWatchOutput",
     "start": "concurrently \"yarn:build-dev\" \"yarn:start-dev\"",
     "postinstall": "electron-builder install-app-deps",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "apollo-generate": "apollo client:codegen --target typescript --passthroughCustomScalars --customScalarsPrefix='WiddeeTypes.' --globalTypesFile='src/__generated__/globalTypes.ts'"
   },
   "dependencies": {
     "@absinthe/socket": "^0.2.1",
     "@absinthe/socket-apollo-link": "^0.2.1",
+    "apollo": "^2.27.0",
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
     "apollo-link": "^1.2.14",
