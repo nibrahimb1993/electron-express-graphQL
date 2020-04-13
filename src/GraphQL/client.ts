@@ -17,6 +17,7 @@ import {
   priceModifiersProviderParser,
   PriceModifiersProvidersModel,
 } from '../DB/Models/PriceModifiersProvider'
+import { snapshot } from './__generated__/snapshot'
 
 const { gql } = require('apollo-server-express')
 
@@ -138,27 +139,23 @@ export const generateElectronClient = () => {
     .query({
       query: snapshotQuery,
     })
-    .then(response => {
+    .then((response: { data: snapshot }) => {
       console.log('snapshot response success')
 
-      const storeTerminals = storeTerminalParser(
-        get(response, 'data.myTerminal', {})
-      )
-      const business = businessParser(
-        get(response, 'data.myTerminal.snapshot.business', {})
-      )
-      const stores = storeParser(
-        get(response, 'data.myTerminal.snapshot.store', {})
-      )
-      const priceModifiersProviders = get(
-        response,
-        'data.myTerminal.snapshot.priceModifiersProviders',
-        {}
-      )
+      const storeTerminals = response.data.myTerminal
+        ? storeTerminalParser(response.data.myTerminal)
+        : null
+      const business = response.data.myTerminal?.snapshot?.business
+        ? businessParser(response.data.myTerminal?.snapshot?.business)
+        : null
+      const stores = response.data.myTerminal?.snapshot?.store
+        ? storeParser(response.data.myTerminal?.snapshot?.store)
+        : null
+      const priceModifiersProviders =
+        response.data.myTerminal?.snapshot?.priceModifiersProviders || []
+
       PriceModifiersProvidersModel.bulkCreate(
-        priceModifiersProviders.map((item: any) =>
-          priceModifiersProviderParser(item)
-        ),
+        priceModifiersProviders.map(item => priceModifiersProviderParser(item)),
         { ignoreDuplicates: true }
       )
       BusinessModel.upsert({ ...business })

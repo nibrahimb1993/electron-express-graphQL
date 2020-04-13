@@ -1,8 +1,9 @@
 import { Model } from 'sequelize'
+import { snapshot_myTerminal_snapshot_priceModifiersProviders } from '../../GraphQL/__generated__/snapshot'
 
 export class PriceModifiersProvidersModel extends Model {
   public id!: string // Note that the `null assertion`,  `!` is required in strict mode.
-  public _revision!: string
+  public _revision!: number
   public data!: string
 }
 export declare type PriceModifiersProvider = Omit<
@@ -11,26 +12,14 @@ export declare type PriceModifiersProvider = Omit<
 >
 
 export const priceModifiersProviderParser = (
-  data: any
+  data: snapshot_myTerminal_snapshot_priceModifiersProviders
 ): PriceModifiersProvider => {
   return {
     id: data.id,
     _revision: data._revision,
     data: JSON.stringify({
-      nameTranslation: {
-        arSa: data.nameTranslation?.arSa,
-        enUs: data.nameTranslation?.enUs,
-      },
-      targets: {
-        entries: {
-          _revision: data.targets?.entries?._revision,
-          additionalPrice: data.targets?.entries?.additionalPrice,
-          id: data.targets?.entries?.id,
-          item: {
-            id: data.targets?.entries?.item?.id,
-          },
-        },
-      },
+      nameTranslation: data.nameTranslation,
+      targets: data.targets,
     }),
   }
 }

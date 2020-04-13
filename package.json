@@ -30,7 +30,8 @@
     "start": "concurrently \"yarn:build-dev\" \"yarn:start-dev\"",
     "postinstall": "electron-builder install-app-deps",
     "build": "electron-builder",
-    "apollo-generate": "apollo client:codegen --target typescript --passthroughCustomScalars --customScalarsPrefix='WiddeeTypes.' --globalTypesFile='src/__generated__/globalTypes.ts'"
+    "apollo-generate": "apollo client:codegen --target typescript --passthroughCustomScalars --customScalarsPrefix='WiddeeTypes.' --globalTypesFile='src/__generated__/globalTypes.ts'",
+    "postapollo-generate": "./appendTypes.sh"
   },
   "dependencies": {
     "@absinthe/socket": "^0.2.1",

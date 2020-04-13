@@ -30,7 +30,7 @@ export const setupDB = async () => {
       primaryKey: true,
     },
     _revision: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
     },
     data: {
