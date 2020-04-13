@@ -12,8 +12,8 @@ export const storeParser = (data: any): Store => {
     id: data.id,
     _revision: data._revision,
     data: JSON.stringify({
-      id: data.id,
       setting: {
+        id: data.setting.id,
         posLayout: data.setting.posLayout,
         allowDecimalQuantityForServices:
           data.setting.allowDecimalQuantityForServices,

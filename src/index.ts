@@ -1,11 +1,8 @@
 import { Express } from 'express'
-import db from './DB'
 import 'cross-fetch/polyfill'
 import { generateElectronClient } from './GraphQL/client'
 import { setupDB } from './DB/Models'
-import { StoreTerminalModel } from './DB/Models/StoreTerminal'
-import { BusinessModel } from './DB/Models/Business'
-import { StoreModel } from './DB/Models/Store'
+import { PriceModifiersProvidersModel } from './DB/Models/PriceModifiersProvider'
 
 const { app, BrowserWindow } = require('electron')
 const express = require('express')
@@ -37,7 +34,7 @@ const expressServer = expressApp.listen(4100, () => {
   console.log(`🚀 Server ready at http://localhost:4100${server.graphqlPath}`)
 })
 expressApp.get('/', (_, res) => {
-  StoreModel.findAll()
+  PriceModifiersProvidersModel.findAll()
     .then(users => {
       console.log({ users })
       return res.json({

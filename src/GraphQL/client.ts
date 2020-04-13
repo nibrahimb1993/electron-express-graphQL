@@ -13,6 +13,10 @@ import {
 } from '../DB/Models/StoreTerminal'
 import { businessParser, BusinessModel } from '../DB/Models/Business'
 import { storeParser, StoreModel } from '../DB/Models/Store'
+import {
+  priceModifiersProviderParser,
+  PriceModifiersProvidersModel,
+} from '../DB/Models/PriceModifiersProvider'
 
 const { gql } = require('apollo-server-express')
 
@@ -145,6 +149,17 @@ export const generateElectronClient = () => {
       )
       const stores = storeParser(
         get(response, 'data.myTerminal.snapshot.store', {})
+      )
+      const priceModifiersProviders = get(
+        response,
+        'data.myTerminal.snapshot.priceModifiersProviders',
+        {}
+      )
+      PriceModifiersProvidersModel.bulkCreate(
+        priceModifiersProviders.map((item: any) =>
+          priceModifiersProviderParser(item)
+        ),
+        { ignoreDuplicates: true }
       )
       BusinessModel.upsert({ ...business })
       StoreTerminalModel.upsert({ ...storeTerminals })
