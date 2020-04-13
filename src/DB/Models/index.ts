@@ -1,6 +1,7 @@
 import { Sequelize, Model, DataTypes } from 'sequelize'
 import { StoreTerminalModel } from './StoreTerminal'
 import { BusinessModel } from './Business'
+import { StoreModel } from './Store'
 
 export const setupDB = async () => {
   const sqlite = require('sqlite3')
@@ -57,6 +58,26 @@ export const setupDB = async () => {
     },
     {
       tableName: 'storeTerminals',
+      sequelize,
+    }
+  )
+  StoreModel.init(
+    {
+      id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+      },
+      _revision: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      data: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: 'stores',
       sequelize,
     }
   )

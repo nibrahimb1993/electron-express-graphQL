@@ -12,6 +12,7 @@ import {
   StoreTerminalModel,
 } from '../DB/Models/StoreTerminal'
 import { businessParser, BusinessModel } from '../DB/Models/Business'
+import { storeParser, StoreModel } from '../DB/Models/Store'
 
 const { gql } = require('apollo-server-express')
 
@@ -142,10 +143,12 @@ export const generateElectronClient = () => {
       const business = businessParser(
         get(response, 'data.myTerminal.snapshot.business', {})
       )
-      console.log({ business })
+      const stores = storeParser(
+        get(response, 'data.myTerminal.snapshot.store', {})
+      )
       BusinessModel.upsert({ ...business })
       StoreTerminalModel.upsert({ ...storeTerminals })
-      console.log({ storeTerminals })
+      StoreModel.upsert({ ...stores })
     })
     .catch(error => {
       console.log('something went wrong')
