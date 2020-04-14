@@ -3,6 +3,7 @@ import 'cross-fetch/polyfill'
 import { generateElectronClient } from './GraphQL/client'
 import { setupDB } from './DB/Models'
 import { PriceModifiersProvidersModel } from './DB/Models/PriceModifiersProvider'
+import { StoreModel } from './DB/Models/Store'
 
 const { app, BrowserWindow } = require('electron')
 const express = require('express')
@@ -36,7 +37,10 @@ const expressServer = expressApp.listen(4100, () => {
 expressApp.get('/', (_, res) => {
   PriceModifiersProvidersModel.findAll()
     .then(users => {
-      console.log({ users })
+      users.forEach(user => {
+        console.log({ record: user.fromDB() })
+      })
+      // console.log({ users })
       return res.json({
         message: 'success',
         data: users,

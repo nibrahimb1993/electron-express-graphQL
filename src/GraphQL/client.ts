@@ -7,14 +7,11 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import * as Fragments from './Fragments'
 
 import { get } from 'lodash'
+import { StoreTerminal, StoreTerminalModel } from '../DB/Models/StoreTerminal'
+import { Business, BusinessModel } from '../DB/Models/Business'
+import { StoreModel, Store } from '../DB/Models/Store'
 import {
-  storeTerminalParser,
-  StoreTerminalModel,
-} from '../DB/Models/StoreTerminal'
-import { businessParser, BusinessModel } from '../DB/Models/Business'
-import { storeParser, StoreModel } from '../DB/Models/Store'
-import {
-  priceModifiersProviderParser,
+  PriceModifiersProvider,
   PriceModifiersProvidersModel,
 } from '../DB/Models/PriceModifiersProvider'
 import { snapshot } from './__generated__/snapshot'
@@ -142,25 +139,27 @@ export const generateElectronClient = () => {
     .then((response: { data: snapshot }) => {
       console.log('snapshot response success')
 
-      const storeTerminals = response.data.myTerminal
-        ? storeTerminalParser(response.data.myTerminal)
+      const storeTerminal = response.data.myTerminal
+        ? StoreTerminal.fromSnapshot(response.data.myTerminal)
         : null
       const business = response.data.myTerminal?.snapshot?.business
-        ? businessParser(response.data.myTerminal?.snapshot?.business)
+        ? Business.fromSnapshot(response.data.myTerminal?.snapshot?.business)
         : null
-      const stores = response.data.myTerminal?.snapshot?.store
-        ? storeParser(response.data.myTerminal?.snapshot?.store)
+      const store = response.data.myTerminal?.snapshot?.store
+        ? Store.fromSnapshot(response.data.myTerminal?.snapshot?.store)
         : null
       const priceModifiersProviders =
         response.data.myTerminal?.snapshot?.priceModifiersProviders || []
 
       PriceModifiersProvidersModel.bulkCreate(
-        priceModifiersProviders.map(item => priceModifiersProviderParser(item)),
+        priceModifiersProviders.map(item =>
+          PriceModifiersProvider.fromSnapshot(item).toDB()
+        ),
         { ignoreDuplicates: true }
       )
-      BusinessModel.upsert({ ...business })
-      StoreTerminalModel.upsert({ ...storeTerminals })
-      StoreModel.upsert({ ...stores })
+      if (business) BusinessModel.upsert(business.toDB())
+      if (storeTerminal) StoreTerminalModel.upsert(storeTerminal.toDB())
+      if (store) StoreModel.upsert(store.toDB())
     })
     .catch(error => {
       console.log('something went wrong')
