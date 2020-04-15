@@ -25,15 +25,17 @@ import {
 export class OrderModel extends Model {
   public id!: string // Note that the `null assertion`,  `!` is required in strict mode.
   public _revision!: number
+  public synced!: boolean
   public data!: string
   public fromDB = (): Order => {
     const data: Exclude<
       snapshot_myTerminal_snapshot_orders,
-      ['id', '_revision']
+      ['id', '_revision', 'synced']
     > = JSON.parse(this.data)
     return new Order(
       this.id,
       this._revision,
+      this.synced,
       data.at,
       data.due,
       data.priceModifierProvider,
@@ -69,6 +71,7 @@ export class Order {
   constructor(
     public id: string,
     public _revision: number,
+    public synced: boolean,
     public at: DateTime,
     public due: Decimal,
     public priceModifierProvider: snapshot_myTerminal_snapshot_orders_priceModifierProvider | null,
@@ -105,6 +108,7 @@ export class Order {
     return new Order(
       object.id,
       object._revision,
+      true, //synced
       object.at,
       object.due,
       object.priceModifierProvider,
@@ -136,10 +140,11 @@ export class Order {
     )
   }
 
-  public toDB = (): DBType => {
+  public toDB = (): DBType & { synced: boolean } => {
     return {
       id: this.id,
       _revision: this._revision,
+      synced: this.synced,
       data: JSON.stringify({
         at: this.at,
         due: this.due,

@@ -147,6 +147,10 @@ export const setupDB = async () => {
   OrderModel.init(
     {
       ...tableBase,
+      synced: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
     },
     {
       tableName: 'orders',
