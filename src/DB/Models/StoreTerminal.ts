@@ -50,7 +50,12 @@ export class StoreTerminal {
     return {
       id: this.id,
       _revision: this._revision,
-      data: JSON.stringify({}),
+      data: JSON.stringify({
+        code: this.code,
+        nameTranslation: this.nameTranslation,
+        keepLocalDataDuration: this.keepLocalDataDuration,
+        location: this.location,
+      }),
     }
   }
 }

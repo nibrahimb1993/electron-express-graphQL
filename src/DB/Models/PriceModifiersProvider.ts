@@ -6,7 +6,7 @@ import {
 } from '../../GraphQL/__generated__/snapshot'
 import { DBType } from 'types'
 
-export class PriceModifiersProvidersModel extends Model {
+export class PriceModifiersProviderModel extends Model {
   public id!: string // Note that the `null assertion`,  `!` is required in strict mode.
   public _revision!: number
   public data!: string
@@ -46,7 +46,10 @@ export class PriceModifiersProvider {
     return {
       id: this.id,
       _revision: this._revision,
-      data: JSON.stringify({}),
+      data: JSON.stringify({
+        nameTranslation: this.nameTranslation,
+        targets: this.targets,
+      }),
     }
   }
 }

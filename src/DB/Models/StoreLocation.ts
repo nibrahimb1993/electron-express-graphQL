@@ -1,22 +1,70 @@
 import { Model } from 'sequelize'
+import {
+  snapshot_myTerminal_snapshot_location,
+  snapshot_myTerminal_snapshot_location_nameTranslation,
+  snapshot_myTerminal_snapshot_location_inventoryPhysicalLocation,
+  snapshot_myTerminal_snapshot_location_deliveryService,
+} from '../../GraphQL/__generated__/snapshot'
+import { DBType } from 'types'
+import { StoreLocationType } from '__generated__/globalTypes'
 
 export class StoreLocationModel extends Model {
   public id!: string // Note that the `null assertion`,  `!` is required in strict mode.
-  public _revision!: string
+  public _revision!: number
   public data!: string
-}
-export declare type StoreLocation = Omit<StoreLocationModel, keyof Model>
 
-export const storeLocationParser = (data: any): StoreLocation => {
-  return {
-    id: data.id,
-    _revision: data._revision,
-    data: JSON.stringify({
-      code: data.code,
-      nameTranslation: data.nameTranslation,
-      inventoryPhysicalLocation: data.inventoryPhysicalLocation,
-      type: data.type,
-      paymentMethods: data.paymentMethods,
-    }),
+  public fromDB = (): StoreLocation => {
+    const data: Exclude<
+      snapshot_myTerminal_snapshot_location,
+      ['id', '_revision']
+    > = JSON.parse(this.data)
+    return new StoreLocation(
+      this.id,
+      this._revision,
+      data.code,
+      data.type,
+      data.nameTranslation,
+      data.inventoryPhysicalLocation,
+      data.deliveryService
+    )
+  }
+}
+export class StoreLocation {
+  constructor(
+    public id: string,
+    public _revision: number,
+    public code: string,
+    public type: StoreLocationType,
+    public nameTranslation: snapshot_myTerminal_snapshot_location_nameTranslation,
+    public inventoryPhysicalLocation: snapshot_myTerminal_snapshot_location_inventoryPhysicalLocation,
+    public deliveryService: snapshot_myTerminal_snapshot_location_deliveryService | null
+  ) {}
+
+  public static fromSnapshot = (
+    object: snapshot_myTerminal_snapshot_location
+  ): StoreLocation => {
+    return new StoreLocation(
+      object.id,
+      object._revision,
+      object.code,
+      object.type,
+      object.nameTranslation,
+      object.inventoryPhysicalLocation,
+      object.deliveryService
+    )
+  }
+
+  public toDB = (): DBType => {
+    return {
+      id: this.id,
+      _revision: this._revision,
+      data: JSON.stringify({
+        code: this.code,
+        type: this.type,
+        nameTranslation: this.nameTranslation,
+        inventoryPhysicalLocation: this.inventoryPhysicalLocation,
+        deliveryService: this.deliveryService,
+      }),
+    }
   }
 }

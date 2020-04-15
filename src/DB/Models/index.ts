@@ -2,7 +2,17 @@ import { Sequelize, Model, DataTypes } from 'sequelize'
 import { StoreTerminalModel } from './StoreTerminal'
 import { BusinessModel } from './Business'
 import { StoreModel } from './Store'
-import { PriceModifiersProvidersModel as PriceModifiersProviderModel } from './PriceModifiersProvider'
+import { PriceModifiersProviderModel } from './PriceModifiersProvider'
+import { BankAccountModel } from './BankAccount'
+import { CategoryModel } from './Category'
+import { CostCenterModel } from './CostCenter'
+import { CustomerModel } from './Customer'
+import { DriverModel } from './Driver'
+import { MenuModel } from './Menu'
+import { OrderModel } from './Order'
+import { PaymentMethodModel } from './PaymentMethod'
+import { StationModel } from './Station'
+import { StoreLocationModel } from './StoreLocation'
 
 export const setupDB = async () => {
   const sqlite = require('sqlite3')
@@ -71,6 +81,96 @@ export const setupDB = async () => {
     },
     {
       tableName: 'priceModifiersProviders',
+      sequelize,
+    }
+  )
+  BankAccountModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'bankAccounts',
+      sequelize,
+    }
+  )
+  CategoryModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'categories',
+      sequelize,
+    }
+  )
+  CostCenterModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'costCenters',
+      sequelize,
+    }
+  )
+  CustomerModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'customers',
+      sequelize,
+    }
+  )
+  DriverModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'drivers',
+      sequelize,
+    }
+  )
+  MenuModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'menus',
+      sequelize,
+    }
+  )
+  OrderModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'orders',
+      sequelize,
+    }
+  )
+  PaymentMethodModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'paymentMethods',
+      sequelize,
+    }
+  )
+  StationModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'stations',
+      sequelize,
+    }
+  )
+  StoreLocationModel.init(
+    {
+      ...tableBase,
+    },
+    {
+      tableName: 'storeLocations',
       sequelize,
     }
   )

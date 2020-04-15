@@ -12,9 +12,19 @@ import { Business, BusinessModel } from '../DB/Models/Business'
 import { StoreModel, Store } from '../DB/Models/Store'
 import {
   PriceModifiersProvider,
-  PriceModifiersProvidersModel,
+  PriceModifiersProviderModel,
 } from '../DB/Models/PriceModifiersProvider'
 import { snapshot } from './__generated__/snapshot'
+import { BankAccountModel, BankAccount } from '../DB/Models/BankAccount'
+import { CategoryModel, Category } from '../DB/Models/Category'
+import { CostCenterModel, CostCenter } from '../DB/Models/CostCenter'
+import { CustomerModel, Customer } from '../DB/Models/Customer'
+import { DriverModel, Driver } from '../DB/Models/Driver'
+import { MenuModel, Menu } from '../DB/Models/Menu'
+import { OrderModel, Order } from '../DB/Models/Order'
+import { PaymentMethodModel, PaymentMethod } from '../DB/Models/PaymentMethod'
+import { StationModel, Station } from '../DB/Models/Station'
+import { StoreLocation, StoreLocationModel } from '../DB/Models/StoreLocation'
 
 const { gql } = require('apollo-server-express')
 
@@ -142,24 +152,85 @@ export const generateElectronClient = () => {
       const storeTerminal = response.data.myTerminal
         ? StoreTerminal.fromSnapshot(response.data.myTerminal)
         : null
+      if (storeTerminal) StoreTerminalModel.upsert(storeTerminal.toDB())
+
       const business = response.data.myTerminal?.snapshot?.business
         ? Business.fromSnapshot(response.data.myTerminal?.snapshot?.business)
         : null
+      if (business) BusinessModel.upsert(business.toDB())
+
       const store = response.data.myTerminal?.snapshot?.store
         ? Store.fromSnapshot(response.data.myTerminal?.snapshot?.store)
         : null
+      if (store) StoreModel.upsert(store.toDB())
+
+      const location = response.data.myTerminal?.snapshot?.location
+        ? StoreLocation.fromSnapshot(
+            response.data.myTerminal?.snapshot?.location
+          )
+        : null
+      if (location) StoreLocationModel.upsert(location.toDB())
+      const bankAccounts =
+        response.data.myTerminal?.snapshot?.location?.bankAccounts.entries || []
+      BankAccountModel.bulkCreate(
+        bankAccounts.map(account => BankAccount.fromSnapshot(account).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const categories = response.data.myTerminal?.snapshot?.categories || []
+      CategoryModel.bulkCreate(
+        categories.map(category => Category.fromSnapshot(category).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const costCenters =
+        response.data.myTerminal?.snapshot?.location?.costCenters.entries || []
+      CostCenterModel.bulkCreate(
+        costCenters.map(center => CostCenter.fromSnapshot(center).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const customers = response.data.myTerminal?.snapshot?.customers || []
+      CustomerModel.bulkCreate(
+        customers.map(customer => Customer.fromSnapshot(customer).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const drivers =
+        response.data.myTerminal?.snapshot?.location?.drivers || []
+      DriverModel.bulkCreate(
+        drivers.map(driver => Driver.fromSnapshot(driver).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const menus =
+        response.data.myTerminal?.snapshot?.location?.menus.entries || []
+      MenuModel.bulkCreate(
+        menus.map(menu => Menu.fromSnapshot(menu).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const orders = response.data.myTerminal?.snapshot?.orders || []
+      OrderModel.bulkCreate(
+        orders.map(order => Order.fromSnapshot(order).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const paymentMethods =
+        response.data.myTerminal?.snapshot?.location?.paymentMethods || []
+      PaymentMethodModel.bulkCreate(
+        paymentMethods.map(record => PaymentMethod.fromSnapshot(record).toDB()),
+        { ignoreDuplicates: true }
+      )
+      const stations =
+        response.data.myTerminal?.snapshot?.location?.stations || []
+      StationModel.bulkCreate(
+        stations.map(record => Station.fromSnapshot(record).toDB()),
+        { ignoreDuplicates: true }
+      )
+
       const priceModifiersProviders =
         response.data.myTerminal?.snapshot?.priceModifiersProviders || []
 
-      PriceModifiersProvidersModel.bulkCreate(
+      PriceModifiersProviderModel.bulkCreate(
         priceModifiersProviders.map(item =>
           PriceModifiersProvider.fromSnapshot(item).toDB()
         ),
         { ignoreDuplicates: true }
       )
-      if (business) BusinessModel.upsert(business.toDB())
-      if (storeTerminal) StoreTerminalModel.upsert(storeTerminal.toDB())
-      if (store) StoreModel.upsert(store.toDB())
     })
     .catch(error => {
       console.log('something went wrong')

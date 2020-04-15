@@ -2,7 +2,7 @@ import { Express } from 'express'
 import 'cross-fetch/polyfill'
 import { generateElectronClient } from './GraphQL/client'
 import { setupDB } from './DB/Models'
-import { PriceModifiersProvidersModel } from './DB/Models/PriceModifiersProvider'
+import { PriceModifiersProviderModel } from './DB/Models/PriceModifiersProvider'
 import { StoreModel } from './DB/Models/Store'
 
 const { app, BrowserWindow } = require('electron')
@@ -35,7 +35,7 @@ const expressServer = expressApp.listen(4100, () => {
   console.log(`🚀 Server ready at http://localhost:4100${server.graphqlPath}`)
 })
 expressApp.get('/', (_, res) => {
-  PriceModifiersProvidersModel.findAll()
+  PriceModifiersProviderModel.findAll()
     .then(users => {
       users.forEach(user => {
         console.log({ record: user.fromDB() })

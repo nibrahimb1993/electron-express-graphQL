@@ -5,8 +5,6 @@ import {
 } from '../../GraphQL/__generated__/snapshot'
 import { DBType } from 'types'
 
-// this should be shared type on all models
-
 export class StoreModel extends Model {
   public id!: string // Note that the `null assertion`,  `!` is required in strict mode.
   public _revision!: number
