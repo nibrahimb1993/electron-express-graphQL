@@ -47,6 +47,11 @@ export const setupDB = async () => {
       type: DataTypes.JSON,
       allowNull: false,
     },
+    snapshotRevision: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      defaultValue: new Date().getTime(),
+    },
   }
   BusinessModel.init(
     {

@@ -148,77 +148,107 @@ export const generateElectronClient = () => {
     })
     .then((response: { data: snapshot }) => {
       console.log('snapshot response success')
-
+      const snapshotRevision = new Date().getTime()
       const storeTerminal = response.data.myTerminal
         ? StoreTerminal.fromSnapshot(response.data.myTerminal)
         : null
-      if (storeTerminal) StoreTerminalModel.upsert(storeTerminal.toDB())
+      if (storeTerminal)
+        StoreTerminalModel.upsert({ ...storeTerminal.toDB(), snapshotRevision })
 
       const business = response.data.myTerminal?.snapshot?.business
         ? Business.fromSnapshot(response.data.myTerminal?.snapshot?.business)
         : null
-      if (business) BusinessModel.upsert(business.toDB())
+      if (business)
+        BusinessModel.upsert({ ...business.toDB(), snapshotRevision })
 
       const store = response.data.myTerminal?.snapshot?.store
         ? Store.fromSnapshot(response.data.myTerminal?.snapshot?.store)
         : null
-      if (store) StoreModel.upsert(store.toDB())
+      if (store) StoreModel.upsert({ ...store.toDB(), snapshotRevision })
 
       const location = response.data.myTerminal?.snapshot?.location
         ? StoreLocation.fromSnapshot(
             response.data.myTerminal?.snapshot?.location
           )
         : null
-      if (location) StoreLocationModel.upsert(location.toDB())
+      if (location)
+        StoreLocationModel.upsert({ ...location.toDB(), snapshotRevision })
       const bankAccounts =
         response.data.myTerminal?.snapshot?.location?.bankAccounts.entries || []
       BankAccountModel.bulkCreate(
-        bankAccounts.map(account => BankAccount.fromSnapshot(account).toDB()),
+        bankAccounts.map(account => ({
+          ...BankAccount.fromSnapshot(account).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const categories = response.data.myTerminal?.snapshot?.categories || []
       CategoryModel.bulkCreate(
-        categories.map(category => Category.fromSnapshot(category).toDB()),
+        categories.map(category => ({
+          ...Category.fromSnapshot(category).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const costCenters =
         response.data.myTerminal?.snapshot?.location?.costCenters.entries || []
       CostCenterModel.bulkCreate(
-        costCenters.map(center => CostCenter.fromSnapshot(center).toDB()),
+        costCenters.map(center => ({
+          ...CostCenter.fromSnapshot(center).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const customers = response.data.myTerminal?.snapshot?.customers || []
       CustomerModel.bulkCreate(
-        customers.map(customer => Customer.fromSnapshot(customer).toDB()),
+        customers.map(customer => ({
+          ...Customer.fromSnapshot(customer).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const drivers =
         response.data.myTerminal?.snapshot?.location?.drivers || []
       DriverModel.bulkCreate(
-        drivers.map(driver => Driver.fromSnapshot(driver).toDB()),
+        drivers.map(driver => ({
+          ...Driver.fromSnapshot(driver).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const menus =
         response.data.myTerminal?.snapshot?.location?.menus.entries || []
       MenuModel.bulkCreate(
-        menus.map(menu => Menu.fromSnapshot(menu).toDB()),
+        menus.map(menu => ({
+          ...Menu.fromSnapshot(menu).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const orders = response.data.myTerminal?.snapshot?.orders || []
       OrderModel.bulkCreate(
-        orders.map(order => Order.fromSnapshot(order).toDB()),
+        orders.map(order => ({
+          ...Order.fromSnapshot(order).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const paymentMethods =
         response.data.myTerminal?.snapshot?.location?.paymentMethods || []
       PaymentMethodModel.bulkCreate(
-        paymentMethods.map(record => PaymentMethod.fromSnapshot(record).toDB()),
+        paymentMethods.map(record => ({
+          ...PaymentMethod.fromSnapshot(record).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
       const stations =
         response.data.myTerminal?.snapshot?.location?.stations || []
       StationModel.bulkCreate(
-        stations.map(record => Station.fromSnapshot(record).toDB()),
+        stations.map(record => ({
+          ...Station.fromSnapshot(record).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
 
@@ -226,9 +256,10 @@ export const generateElectronClient = () => {
         response.data.myTerminal?.snapshot?.priceModifiersProviders || []
 
       PriceModifiersProviderModel.bulkCreate(
-        priceModifiersProviders.map(item =>
-          PriceModifiersProvider.fromSnapshot(item).toDB()
-        ),
+        priceModifiersProviders.map(item => ({
+          ...PriceModifiersProvider.fromSnapshot(item).toDB(),
+          snapshotRevision,
+        })),
         { ignoreDuplicates: true }
       )
     })
