@@ -7,6 +7,7 @@ import {
 } from '../../GraphQL/__generated__/snapshot'
 import { DBType } from 'types'
 import { StoreLocationType } from '__generated__/globalTypes'
+import { storeTerminalNotification_storeTerminalNotification_record_StoreLocation } from 'GraphQL/__generated__/storeTerminalNotification'
 
 export class StoreLocationModel extends Model {
   public id!: string // Note that the `null assertion`,  `!` is required in strict mode.
@@ -41,7 +42,9 @@ export class StoreLocation {
   ) {}
 
   public static fromSnapshot = (
-    object: snapshot_myTerminal_snapshot_location
+    object:
+      | snapshot_myTerminal_snapshot_location
+      | storeTerminalNotification_storeTerminalNotification_record_StoreLocation
   ): StoreLocation => {
     return new StoreLocation(
       object.id,

@@ -13,6 +13,7 @@ import { OrderModel } from './Order'
 import { PaymentMethodModel } from './PaymentMethod'
 import { StationModel } from './Station'
 import { StoreLocationModel } from './StoreLocation'
+import { ItemModel } from './Item'
 
 export const setupDB = async () => {
   const sqlite = require('sqlite3')
@@ -176,6 +177,24 @@ export const setupDB = async () => {
     },
     {
       tableName: 'storeLocations',
+      sequelize,
+    }
+  )
+  ItemModel.init(
+    {
+      ...tableBase,
+      upc: {
+        type: DataTypes.STRING,
+      },
+      sku: {
+        type: DataTypes.STRING,
+      },
+      type: {
+        type: DataTypes.STRING,
+      },
+    },
+    {
+      tableName: 'items',
       sequelize,
     }
   )
